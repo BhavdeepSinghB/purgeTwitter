@@ -24,13 +24,13 @@ class TwitterPurge:
             print('Error! Failed to get request token')
         request_token = auth.request_token
         webbrowser.open_new_tab(redirect_url)
-        # verifier = input('Verifier:')
+        verifier = input('Verifier:')
         auth = tweepy.OAuthHandler(self.API_KEY, self.API_SECRET)
         token = request_token
         auth.request_token = token
 
         try:
-            auth.get_access_token()
+            auth.get_access_token(verifier=verifier)
         except tweepy.TweepError:
             print('Error! Failed to get access token!')
         key = auth.access_token
