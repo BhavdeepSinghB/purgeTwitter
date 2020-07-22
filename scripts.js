@@ -6,7 +6,7 @@ function checkURL() {
     }
     document.getElementsByClassName("Tokenization")[0].style.display = "block";
     document.getElementsByClassName("Main")[0].style.display = "none";
-    var str = window.location.search.split("&")[2];
+    var str = window.location.search.split("&")[1].split("=")[1];
     document.getElementById("verifier_input").value = str;  
     return true;
 }
