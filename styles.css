@@ -1,0 +1,18 @@
+.Tokenization {
+    display: none;
+}
+
+.container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 98vw;
+    height: 90vh;
+}
+
+.Main {
+    display: inline-block
+}
