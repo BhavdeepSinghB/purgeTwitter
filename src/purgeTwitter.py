@@ -2,13 +2,9 @@ import tweepy
 import time
 import threading
 import webbrowser
+import config
 
 class TwitterPurge:
-    API_KEY = 'c7iPSOknHGPPOruXrYo8d1tKe'
-    API_SECRET = '31uLPFRIPXXgmzWvUdlOCsxoGaRZ4EJxIrA0fDoaoQovvuUNVz'
-    ACCESS = '755691023305740289-nybekgIus7QaKbNDXNKeUZw7Qg5k92M'
-    ACCESS_SECRET = 'zmlFhEVzHDpdZEZk6m8dJqYiTGSTlRKfy1X3fNTrjcfB1'
-    
     me = ''
     my_id = ''
     target_user = ''
@@ -17,7 +13,7 @@ class TwitterPurge:
 
     def authenticate(self):
         # API calls = 3
-        auth = tweepy.OAuthHandler(self.API_KEY, self.API_SECRET)
+        auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
         try:
             redirect_url = auth.get_authorization_url()
         except tweepy.TweepError:
@@ -25,7 +21,7 @@ class TwitterPurge:
         request_token = auth.request_token
         webbrowser.open_new_tab(redirect_url)
         verifier = input('Verifier:')
-        auth = tweepy.OAuthHandler(self.API_KEY, self.API_SECRET)
+        auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
         token = request_token
         auth.request_token = token
 
@@ -35,9 +31,8 @@ class TwitterPurge:
             print('Error! Failed to get access token!')
         key = auth.access_token
         secret = auth.access_token_secret
-        auth = tweepy.OAuthHandler(self.API_KEY, self.API_SECRET)
+        auth = tweepy.OAuthHandler(config.API_KEY, config.API_SECRET)
         auth.set_access_token(key, secret)
-        #auth.set_access_token(self.ACCESS, self.ACCESS_SECRET)
         self.api = tweepy.API(auth)
         try:
             self.api.verify_credentials()
@@ -98,7 +93,8 @@ class TwitterPurge:
         #Find mutuals and destroy friendship
         mutuals = set(my_followers).intersection(target_user_followers)
         mutuals = list(mutuals)
-        
+        print(mutuals)
+
         # Threading since there is no batch version of unfollowing, this saves time as the number of mutuals increases
         threads = []
         for i in mutuals:
@@ -108,7 +104,7 @@ class TwitterPurge:
             t.start()
         for t in threads:
             t.join()
-    
+        
     def delete_statuses(self):
         target_statuses = []
         # Method to get all statuses and retrieve the id of those which mention the target user
@@ -133,14 +129,23 @@ class TwitterPurge:
                 t.start()
             for t in threads:
                 t.join()
-
+    
+    def change_cover(self):
+        print("Changing cover image to cover_replacement.jpg")
+        try:
+            self.api.update_profile_banner("./cover-replacement.jpg")
+            print("Cover image replacement successful")
+        except tweepy.TweepError as e:
+            print("Error ", e)
+        
+        
 t = TwitterPurge()
 if not t.authenticate():
     print("Authentication Error")
     exit(-1)
 
 t.print_me()
-
+# t.change_cover()
 # t.get_target_user()
 # t.unfriend_mutuals()
 # t.delete_statuses()
